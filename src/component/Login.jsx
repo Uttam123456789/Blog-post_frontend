@@ -22,9 +22,9 @@ const Login = () => {
                     .then((e) => {
                         console.log(e);
                         localStorage.setItem('token',e.data.token);
-                        if( e.data.user=== mail){
-                          navigate("/");
-                        }
+                        // if( e.data.user=== mail){
+                        //   navigate("/");
+                        // }
                     })
                     .catch(() => {
                         alert("Error in the code", e);
