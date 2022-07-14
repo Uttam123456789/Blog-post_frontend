@@ -21,10 +21,12 @@ const Login = () => {
         axios.post('http://127.0.0.1:8000/api/login', data)
                     .then((e) => {
                         console.log(e);
-                        localStorage.setItem('token',e.data.token);
-                        // if( e.data.user=== mail){
-                        //   navigate("/");
-                        // }
+                        localStorage.setItem('token',JSON.stringify(e.data));
+                        const temp = e.data.userId;
+                        console.log(temp);
+                          navigate(`/Dashboard/${temp}`);
+                        alert("ok")
+                    
                     })
                     .catch(() => {
                         alert("Error in the code", e);
