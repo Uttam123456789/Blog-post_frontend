@@ -8,35 +8,24 @@ const NavBar = () => {
     const [status, setStatus] = useState(false);
 
     const token = JSON.parse(localStorage.getItem('token'));
-    console.log("navbar page", token.token);
+
     const check = () => {
         if (token.length == 0 || token == undefined) {
+            console.log("if check");
             setStatus(false);
         } else {
+            console.log("else  check");
             setStatus(true);
         }
     }
-
-    const logout = () => {
-
-        axios.post(`http://127.0.0.1:8000/api/logoutUser`, {
-            headers: {
-                Authorization: "Bearer" + " " + token.token,
-            }
-        })
-            .then((e) => {
-                console.log(e.data);
+    const logout = () => {  
                 localStorage.setItem('token', JSON.stringify([]));
                 setStatus(false);
                 navigate('/login');
-            })
-            .catch((e) => {
-                console.log(e);
-            })
     }
     useEffect(() => {
         check();
-    }, [])
+    }, [status])
     return (
         <>
             <nav className="relative flex flex-wrap items-center justify-between px-2 bg-violet-500 mb-3">
@@ -46,7 +35,7 @@ const NavBar = () => {
                             All Post
                         </NavLink>
 
-                        <NavLink className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" to={"/Dashboard/:id"}>
+                        <NavLink to={"/Dashboard"} className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" >
                             DashBoard
                         </NavLink>
                     </div>

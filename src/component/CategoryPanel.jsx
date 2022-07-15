@@ -7,6 +7,8 @@ const CategoryPanel = () => {
     const [name, setName] = useState("");
     const [item, setItem] = useState("");
     const [status, setStatus] = useState("");
+    const [update , setUpdate] =useState(false)
+    
     
     const user = JSON.parse(localStorage.getItem('token'))
     
@@ -20,12 +22,13 @@ const CategoryPanel = () => {
 
         axios.post('http://127.0.0.1:8000/api/categoryStore', data)
             .then((e) => {
-                console.log(e);
-                alert(e);
+                console.log(e)
+                alert(e)
+               
 
             })
             .catch(() => {
-                alert("Error in the code", e);
+                alert("Error in the code", e)
                 // console.log("error");
             });
 
@@ -38,7 +41,7 @@ const CategoryPanel = () => {
         axios.get(`http://127.0.0.1:8000/api/categoryView`)
             .then((e) => {
                 console.log(e.data);
-                setItem(e.data);
+                setItem(e.data)
 
             })
             .catch(() => {
@@ -46,10 +49,30 @@ const CategoryPanel = () => {
                 // console.log("error");
             });
     }
+    const deleteCategory=(id , userid )=>{
+        setUpdate(false);
+        if(user.userId == userid ) {
+            axios.delete(`http://127.0.0.1:8000/api/categoryDelete/${id}`)
+            .then((e) => {
+                setUpdate(true)
+                console.log(e.data)
+               
+            })
+            .catch((e) => {
+                alert("Error in the code", e);
+                // console.log("error");
+            });
+        }
+
+        else{
+            alert("only the Owner can delete the Category");
+        }
+      
+    }
     useEffect(() => {
         getData();
 
-    }, [])
+    }, [status, update])
     return (
         <>
             <div >
@@ -71,15 +94,22 @@ const CategoryPanel = () => {
                         <div className='flex'>
                             {
                                 item.map((ele) => {
-                                    return (<>
+                                    return (<div className='flex flex-col'>
                                         <Link to={`/category/` + ele.category_id}>
-                                            <div class="flex flex-wrap justify-center">
-                                                <div class="w-6/12 sm:w-4/12 px-1">
-                                                    <span class="text-indigo-500 border border-indigo-500 hover:bg-indigo-500 hover:text-white active:bg-indigo-600 font-bold uppercase text-sm px-6 py-3 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">{ele.name}</span>
+                                            <div className="flex flex-wrap justify-center">
+                                                <div className="w-6/12 sm:w-4/12 px-1">
+                                                    <span className="text-indigo-500 border border-indigo-500 hover:bg-indigo-500 hover:text-white active:bg-indigo-600 font-bold uppercase text-sm px-6 py-3 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">{ele.name}</span>
+                                                    
                                                 </div>
                                             </div>
                                         </Link>
-                                    </>)
+                                        <div className="flex flex-wrap justify-center">
+                                                <div className="w-9/12 sm:w-4/12 px-1">
+                                                    <button onClick={()=>deleteCategory(ele.category_id , ele.user_id)} className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-2 py-1 text-center mr-2 mb-2" type="button">Delete</button>
+                                                    
+                                                </div>
+                                            </div>
+                                    </div>)
                                 })
                             }
                         </div>

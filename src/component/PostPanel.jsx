@@ -12,37 +12,46 @@ const PostPanel = () => {
     const [category, setCategory] = useState("");
     const [categoryData, setCategoryData] = useState([]);
     const [editStatus, setEditStatus] = useState(false);
+    const [updateId ,setUpdateId] = useState("");
+    const [state , setState] = useState();
 
 
     const user = JSON.parse(localStorage.getItem('token'))
 
 
-    const updatePost = (id) => {
-        setEditStatus(true);
+    const updatePost = (id,userid) => {
+        if(user.userId == userid){
+            setEditStatus(true);
+            setUpdateId(id);
+        }
+        else{
+            alert("Only Owner can edit the poast")
+        }
 
 
     }
-    // const submitUpdateForm = (e) => {
-    //     e.preventDefault();
-    //     data.append('title', title);
-    //     data.append('image', img);
-    //     data.append('desc', desc);
-    //     axios.post('http://127.0.0.1:8000/api/postStore', data)
-    //         .then((e) => {
-    //             console.log(e);
-    //             alert(e.data);
+    const submitUpdateForm = (e) => {
+        e.preventDefault();
+        const data = new FormData;
+        data.append('title', title);
+        data.append('image', img);
+        data.append('desc', desc);
+        axios.post(`http://127.0.0.1:8000/api/postUpdate/${updateId}`, data)
+            .then((e) => {
+                console.log(e);
+                alert(e.data);
 
 
-    //         })
-    //         .catch(() => {
-    //             alert("Error in the code", e);
-    //             // console.log("error");
-    //         });
-    //     setTitle("");
-    //     setCategory("");
-    //     setDesc("");
-    //     setEditStatus(false);
-    // }
+            })
+            .catch(() => {
+                alert("Error in the code", e);
+                // console.log("error");
+            });
+        setTitle("");
+        
+        setDesc("");
+        setEditStatus(false);
+    }
 
 
     const submitPostForm = async (e) => {
@@ -71,9 +80,11 @@ const PostPanel = () => {
                     alert("Error in the code", e);
                     // console.log("error");
                 });
+            setState("added")
             setTitle("");
             setCategory("");
             setDesc("");
+            
 
         }
         else {
@@ -108,21 +119,27 @@ const PostPanel = () => {
                 // console.log("error");
             });
     }
-    const deletePost = (id, e) => {
+    const deletePost = (id,userid) => {
+        if(user.userId == userid){
         axios.delete(`http://127.0.0.1:8000/api/postDelete/${id}`)
             .then((e) => {
                 console.log(e.data);
+                setState("deleted")
             })
-            .catch(() => {
+            .catch((e) => {
                 alert("Error in the code", e);
                 // console.log("error");
             });
+        }
+        else{
+            alert("only the Owner can delete the post");
+        }
     }
 
     useEffect(() => {
         getData();
         getCategory();
-    }, []);
+    }, [editStatus,state]);
     const orig = 'http://localhost:8000/uploads/post/';
     return (
         <>
@@ -157,8 +174,8 @@ const PostPanel = () => {
                                             <div className="px-6 py-4">
                                                 <p className='text-xl my-1'>{e.title}</p>
                                                 <Link to={"/post/" + e.post_id} className="bg-sky-500 text-white active:bg-sky-600 font-bold uppercase text-xs px-4 py-2 rounded-full shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"  >View</Link>
-                                                <button onClick={() => { updatePost(e.post_id) }} className="bg-teal-500 text-white active:bg-teal-600 font-bold uppercase text-xs px-4 py-2 rounded-full shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" >Edit</button>
-                                                <button onClick={() => { deletePost(e.post_id) }} className="bg-rose-500 text-white active:bg-rose-600 font-bold uppercase text-xs px-4 py-2 rounded-full shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">Delete</button>
+                                                <button onClick={() => { updatePost(e.post_id,e.user_id) }} className="bg-teal-500 text-white active:bg-teal-600 font-bold uppercase text-xs px-4 py-2 rounded-full shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" >Edit</button>
+                                                <button onClick={() => { deletePost(e.post_id,e.user_id) }} className="bg-rose-500 text-white active:bg-rose-600 font-bold uppercase text-xs px-4 py-2 rounded-full shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">Delete</button>
                                             </div>
                                         </div>
                                     </>)
@@ -167,22 +184,21 @@ const PostPanel = () => {
                         </div>
                     </>
                 )}
-                {/* {
-                    editStatus ? <form onSubmit={submitPostForm}>
+                {
+                    editStatus ? 
+                    <form onSubmit={submitUpdateForm}>
                         <label className="block" htmlFor="Name">Title</label>
                         <input type="text" name='title' placeholder='Title' value={title} onChange={(e) => { setTitle(e.target.value) }} className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600" />
                         <label className="block" htmlFor="Name">Image</label>
                         <input type="file" name='image' onChange={(e) => { setImg(e.target.files[0]) }} className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600" />
-                        <label className="block" htmlFor="Name">Category</label>
-                        <input type="text" name='category' placeholder='Category' value={category} onChange={(e) => { setCategory(e.target.value) }} className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600" />
                         <label className="block" htmlFor="Name">Description</label>
                         <textarea name="desc" rows="4" placeholder='Description' value={desc} onChange={(e) => { setDesc(e.target.value) }} className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"></textarea>
                         <div className="flex">
-                            <button className="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900" onClick={submitPostForm}>
+                            <button className="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900" onClick={submitUpdateForm}>
                                 Add </button>
                         </div>
                     </form> : ""
-                } */}
+                }
             </div>
 
         </>
