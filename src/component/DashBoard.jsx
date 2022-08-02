@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import CategoryPanel from './CategoryPanel';
 import PostPanel from './PostPanel';
 
 const DashBoard = () => {
     const [item, setItem] = useState("");
     const [status, setStatus] = useState("");
+    const token = JSON.parse(localStorage.getItem('token'));
+
+    const navigate = useNavigate()
     
     const { id } = useParams();
-    console.log(id);
+    
     const submitForm = (e) => {
         e.preventDefault();
 
@@ -19,16 +22,25 @@ const DashBoard = () => {
 
     }
     const getUser = (e) => {
-        axios.get(`http://127.0.0.1:8000/api/userView/${id}`)
+        if(token.userId == id){
+        axios.get(`http://127.0.0.1:8000/api/userView/${id}` , { headers: {"Authorization" : `Bearer ${token.token}`}})
             .then((e) => {
                 console.log(e.data);
                 setItem(e.data);
 
             })
-            .catch(() => {
-                alert("Error in the code", e);
-                // console.log("error");
+            .catch((e) => {
+                if( e.response.status === 401){
+                    navigate('/login');
+                }else{
+
+                    console.log("Error in the code");
+                }
             });
+        }
+        else{
+           navigate(`/logout/${token.userId}`)
+        }
     }
 
     useEffect(() => {
@@ -47,9 +59,6 @@ const DashBoard = () => {
                             <div className="image overflow-hidden">
                                 <img className="h-auto w-full mx-auto" src={orig + item.image} alt="" />
                             </div>
-
-
-
                         </div>
                         <div className="w-full md:w-9/12 mx-2 h-64">
                             {/* Profile tab */}

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams,Navigate,Outlet } from 'react-router-dom';
 
 
 const Protected = ({prop}) => {
@@ -7,6 +7,10 @@ const Protected = ({prop}) => {
     const navigate = useNavigate();
 
     const token = JSON.parse(localStorage.getItem('token'));
+
+    let auth = {'token':token.token};
+
+
     useEffect(()=>{
     if(prop === "dashboard"){
         if (token.length == 0 || token == undefined) {
@@ -16,6 +20,7 @@ const Protected = ({prop}) => {
             
         }
     }
+
     // else if(prop === "dashboard/id"){
     //    if(token.userId == id){
     //        navigate(`/Dashboard/${token.userId}`);
@@ -33,8 +38,13 @@ const Protected = ({prop}) => {
 },[])
   return (
    <>
-   
-   
+   {
+    auth.token ? "" : alert("please login")
+   }
+   {
+       
+   auth.token ? <Outlet/> :( <Navigate to="/login"/>)
+   }
    </>
   )
 }

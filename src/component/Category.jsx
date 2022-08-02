@@ -38,6 +38,7 @@ const Category = () => {
 
 
     const getData = (e) => {
+        
         axios.get('http://127.0.0.1:8000/api/postView')
             .then((e) => {
                 console.log(e.data);

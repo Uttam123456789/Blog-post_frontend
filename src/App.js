@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+
 import './index.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from './component/Register';
@@ -14,31 +14,28 @@ import Logout from './component/Logout';
 
 function App() {
 
-  return (<>
-    {/* <h1 className=" text-3xl font-bold underline" >
-      Hello world!
-    </h1> */}
+  return (
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<NavBar />}>
 
-    <Router>
-      <Routes>
-        <Route path="/" element={<NavBar />}>
-          <Route path="home" element={<Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/post/:id" element={<Post />} />
-          {/* <Route path="/Dashboard/:id" element={<Protected prop= { "dashboard/id" } />} /> */}
-          <Route path="/Dashboard/:id" element={<DashBoard/>} />
-          <Route path="/Dashboard" element={<Protected prop= { "dashboard" } />} />
-          {/* <Route path="/category/:id" element={<Protected prop= { "category/id" } />} /> */}
-
-          <Route path="/category/:id" element={<Category />} />
-        </Route>
-        <Route path="/logout/:id" element={ <Logout/>}/>
-        <Route path='*' element={ <h1> provide a proper url</h1>}/>
-      </Routes>
-    </Router>
-  </>
-
+            <Route path="/login" element={<Login />} />
+            <Route path="home" element={<Home />} />
+            <Route path="/register" element={<Register />} />
+            <Route element={<Protected />}>
+              <Route path="/post/:id" element={<Post />} />
+            
+              <Route path="/Dashboard/:id" element={<DashBoard />} />
+              <Route path="/Dashboard" element={<Protected prop={"dashboard"} />} />
+              <Route path="/category/:id" element={<Category />} />
+            </Route>
+          </Route>
+          <Route path="/logout/:id" element={<Logout />} />
+          <Route path='*' element={<h1> provide a proper url</h1>} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

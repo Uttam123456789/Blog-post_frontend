@@ -6,49 +6,40 @@ import CardSearch from './CardSearch';
 const Home = () => {
     const [category, setCategory] = useState([]);
     const [post, setPost] = useState([]);
-    // const [temp , setTemp] = useState([]);
-    const [search, setSearch] = useState("")
-
-
+    const [search, setSearch] = useState("");
+    
     const showCategory = (e) => {
 
         axios.get('http://127.0.0.1:8000/api/categoryView')
             .then((e) => {
-                console.log(e.data);
-                setCategory(e.data);
-
-
-
+                setCategory(e.data);                
             })
             .catch(() => {
                 alert("Error in the code", e);
                 // console.log("error");
             });
     }
-
     const showPost = (e) => {
         axios.get('http://127.0.0.1:8000/api/postView')
             .then((e) => {
-                console.log(e.data);
-
                 setPost(e.data);
-
-
+                localStorage.setItem('allpost',JSON.stringify(e.data));
+                
+               
             })
             .catch(() => {
                 alert("Error in the code", e);
                 // console.log("error");
             });
     }
-
     useEffect(() => {
         showCategory();
         showPost();
     }, [])
     const getCategoryId = (id) => {
-        // showPost();
-        let temp = post
-        const item = post.filter((ele) => {
+      
+        
+        const item = JSON.parse(localStorage.getItem('allpost')).filter((ele) => {
             return id === ele.category_id;
         })
         setPost(item);
@@ -70,12 +61,12 @@ const Home = () => {
             <div className=' flex mx-6'>
                 <div className='flex flex-col p-3 text-blackl w-44 '>
                     <h4 className='text-2xl underline'>Categories</h4>
-                    <button className='text-2xl' onClick={showPost}>All</button>
+                    <button className="text-2xl font-serif" onClick={showPost}>All</button>
 
                     {category.map((e, index) => {
                         return (
                             <>
-                                <button className='text-2xl' onClick={() => getCategoryId(e.category_id)}>{e.name} </button>
+                                <button className='text-2xl font-serif' onClick={() => getCategoryId(e.category_id)}>{e.name} </button>
                             </>
                         )
                     })}

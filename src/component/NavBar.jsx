@@ -18,10 +18,18 @@ const NavBar = () => {
             setStatus(true);
         }
     }
-    const logout = () => {  
-                localStorage.setItem('token', JSON.stringify([]));
-                setStatus(false);
-                navigate('/login');
+    const logout = async (e) => {  
+        axios.get(`http://127.0.0.1:8000/api/logoutUser`, { headers: {"Authorization" : `Bearer ${token.token}`} })
+        .then((e) => {
+            console.log(e);
+            localStorage.setItem('token', JSON.stringify([]))
+            setStatus(false)
+            navigate('/login')
+        })
+        .catch(() => {
+            console.log("Error in the code", e);
+            // console.log("error");
+        });
     }
     useEffect(() => {
         check();

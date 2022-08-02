@@ -1,10 +1,25 @@
+import axios from 'axios';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
+
 
 const Logout = () => {
-    const {id} = useParams()
+    const {id} = useParams();
+    const token = JSON.parse(localStorage.getItem('token'));
+    const navigate = useNavigate();
     
-    const logoutUser = ()=>{
+    const logoutUser = (e)=>{
+      axios.get(`http://127.0.0.1:8000/api/logoutUser`, { headers: {"Authorization" : `Bearer ${token.token}`} })
+        .then((e) => {
+            console.log(e);
+            localStorage.setItem('token', JSON.stringify([]))
+           
+            navigate('/login')
+        })
+        .catch(() => {
+            console.log("Error in the code", e);
+            // console.log("error");
+        });
        
     }
 

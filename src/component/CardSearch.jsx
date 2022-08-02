@@ -11,7 +11,7 @@ const CardSearch = ({search , post }) => {
     const orig = 'http://localhost:8000/uploads/post/';
   return (
     <>    
-    {   item === ""? <span className='text-black'>no data found</span>:
+    {   item.length === 0? <span className='text-xl text-center text-red-700'>No Result Found</span> :
         item.map((e) => {
             return (<>
                 <div className=" bg-slate-300 max-w-xs h-64 rounded-md overflow-hidden shadow-lg">

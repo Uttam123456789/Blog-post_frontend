@@ -94,7 +94,7 @@ const PostPanel = () => {
 
     }
     const getData = (e) => {
-        axios.get('http://127.0.0.1:8000/api/postView')
+        axios.get(`http://127.0.0.1:8000/api/userPost/${user.userId}`)
             .then((e) => {
                 console.log(e.data);
 
